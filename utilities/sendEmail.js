@@ -1,6 +1,7 @@
 const nodeMailer = require('nodemailer');
 // const fs = require('fs').promises;
 // const ejs = require('ejs');
+require('dotenv').config();
 
 
 const sendEmail = async (options) => {
@@ -9,8 +10,8 @@ const sendEmail = async (options) => {
     let transporter = nodeMailer.createTransport({
         service: 'gmail',
         auth: {
-            user: "abhishekchoudhary.me@gmail.com",
-            pass: "ntmuqwfzpjogrpcw"
+            user: process.env.GAMIL_ID,
+            pass: process.env.GAMIL_PASSWORD
         }
     })
 
@@ -31,7 +32,7 @@ const sendEmail = async (options) => {
 
 
     let mailOptions = {
-        from: "abhishekchoudhary.me@gmail.com",
+        from:   process.env.GAMIL_ID,       // access it from env
         to: options.to,
         subject: options.subject,
         // html:   templateString
