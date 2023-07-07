@@ -1,11 +1,6 @@
-// abhi123 , PTYfPGBXdfXRGcMl
-// mongodb+srv://abhi123:PTYfPGBXdfXRGcMl@cluster0.jkbcfmd.mongodb.net/
 
-// hello , YqFhlkCSuV0NJf1u
-// mongodb+srv://hello:<password>@cluster0.jzrfkcb.mongodb.net/
 
-// Aws: 
-// AKIA3LINBZ27R32JM7EZ , TmtDiLZrPZhFM+VKsY6cpf7B7cc9gGBZpuTr/CdO 
+
 
 const express = require('express');
 const app = express();
@@ -21,6 +16,9 @@ const PORT = 5000;
 // models: 
 require('./models/user.models');
 require('./models/post');
+
+// routes:
+const userRoutes = require('./routes/user.route');
 
 // database connection: 
 
@@ -44,6 +42,7 @@ app.use(express.json());
 app.use(cors());
 app.use(customLogger);
 app.use(morgan('abhi'));
+app.use('/api/user', userRoutes);
 
 // app.use(errorHandler);
 

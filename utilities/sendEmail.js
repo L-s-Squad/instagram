@@ -1,5 +1,5 @@
 const nodeMailer = require('nodemailer');
-const fs = require('fs').promises;
+// const fs = require('fs').promises;
 // const ejs = require('ejs');
 
 
@@ -10,22 +10,22 @@ const sendEmail = async (options) => {
         service: 'gmail',
         auth: {
             user: "abhishekchoudhary.me@gmail.com",
-            pass: "cmclqddufwzpmolz"
+            pass: "ntmuqwfzpjogrpcw"
         }
     })
 
     try{
-         let templateString =  await fs.readFile('./mail1.html', 'utf-8');
+        //  let templateString =  await fs.readFile('./mail1.html', 'utf-8');
 
-         templateString = templateString.replaceAll(
-            "{name}", options.name
-         )
-         templateString = templateString.replaceAll(
-            "{age}", options.age
-            )
-        templateString = templateString.replaceAll(
-            "{message}", options.message
-        )
+        //  templateString = templateString.replaceAll(
+        //     "{name}", options.name
+        //  )
+        //  templateString = templateString.replaceAll(
+        //     "{age}", options.age
+        //     )
+        // templateString = templateString.replaceAll(
+        //     "{message}", options.message
+        // )
 
         //  const htmlString = ejs.render(templateString, {...options})
 
@@ -34,7 +34,9 @@ const sendEmail = async (options) => {
         from: "abhishekchoudhary.me@gmail.com",
         to: options.to,
         subject: options.subject,
-        html:   templateString
+        // html:   templateString
+        text: options.message,
+
       }
        // 3) Actually send the email
 
@@ -48,16 +50,9 @@ const sendEmail = async (options) => {
   }
     catch(err){
         console.log(err);
-    }
-
-   
-    
+    }   
 }
 
-sendEmail({
-    to: "theabhishek.ofc@gmail.com",
-    subject: "Happy Birthday last time definately",
-    name: "Piysuh Dubey",
-    age: 21,
-    message: "Happy Birthday"
-})
+
+
+module.exports = sendEmail;
