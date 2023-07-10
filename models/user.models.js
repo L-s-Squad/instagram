@@ -25,7 +25,7 @@ const userSchema = new mongoose.Schema({
         type: String,
     },
     phone_otp_time: {
-        type: Date,
+        type: Number,
     },
     phone_verified:{
         type: Boolean,

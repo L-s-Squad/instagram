@@ -14,10 +14,11 @@ function generateOtp(){
 async function generateAndSendOtp(savedUser){
     let otp = generateOtp();
     let updatedUser = await User.findByIdAndUpdate(savedUser._id, {
-        phone_otp: otp,
+        phone_otp: "123456",
         phone_otp_time: Date.now()
     }, {new: true})
-    sendSms(`Your otp is ${otp}`, savedUser.phone);
+    // sendSms(`Your otp is ${otp}`, savedUser.phone);
+    // return updatedUser;
 }
 
 const signup = async (req, res,next) => {
@@ -56,14 +57,18 @@ const verifyOtp = async (req, res, next) => {
         return sendResponse(res, 400, false, "All fields are required", "");
     }
     try{
-       const foundUser =  User.findById({_id: userId})
+       const foundUser =  await User.findById({_id: userId})
+         console.log("XYZ",foundUser);
          if(!foundUser){
                 return sendResponse(res, 400, false, "User not found", "");
          }
             if(foundUser.phone_otp != otp){
+                 console.log(foundUser.phone_otp);
+                    console.log(otp);
                 return sendResponse(res, 400, false, "Otp is incorrect", "");
             }
-            if(foundUser.phone_otp_time+ 15*60*1000 < Date.now()){
+            if(foundUser.phone_otp_time+ 1*60*1000 < Date.now()){
+                console.log(foundUser.phone_otp_time);
                 return sendResponse(res, 400, false, "Otp is expired, Request a new One", "");
             }
             let updatedUser = await User.findByIdAndUpdate({_id: userId}, {phone_verified: true}, {new: true});
@@ -89,7 +94,7 @@ const resendOtp = async (req, res, next) => {
                 return sendResponse(res, 400, false, "User not found", "");
         }
         generateAndSendOtp(foundUser);
-        return sendResponse(res, 200, true, "Otp sent successfully", "");
+        return sendResponse(res, 200, true, "Otp sent successfully", foundUser);
    }
 
     catch(err){
