@@ -6,12 +6,16 @@ require('dotenv').config();
 
 const sendEmail = async (options) => {
 
+    console.log(options);
+    console.log(process.env.GMAIL_ID);
+    console.log(process.env.GAMIL_PASSWORD);
+
     // 1) Create a transporter
     let transporter = nodeMailer.createTransport({
         service: 'gmail',
         auth: {
-            user: process.env.GAMIL_ID,
-            pass: process.env.GAMIL_PASSWORD
+            user: process.env.GMAIL_ID,
+            pass: process.env.GMAIL_PASSWORD
         }
     })
 

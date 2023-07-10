@@ -1,5 +1,5 @@
 PRODUCTION_PORT=6000
 DEV_PORT=7000
 DATABASE_URL=mongodb+srv://abhi123:PTYfPGBXdfXRGcMl@cluster0.jkbcfmd.mongodb.net/
-GAMIL_ID= 
+GMAIL_ID=
 GMAIL_PASSWORD=

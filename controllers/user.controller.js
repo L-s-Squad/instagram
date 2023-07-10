@@ -11,6 +11,15 @@ function generateOtp(){
     return otp;
 }
 
+async function generateAndSendOtp(savedUser){
+    let otp = generateOtp();
+    let updatedUser = await User.findByIdAndUpdate(savedUser._id, {
+        phone_otp: otp,
+        phone_otp_time: Date.now()
+    }, {new: true})
+    sendSms(`Your otp is ${otp}`, savedUser.phone);
+}
+
 const signup = async (req, res,next) => {
      let {name, email, password, phone} = req.body;
      if(!name || !email || !password || !phone){
@@ -32,24 +41,60 @@ const signup = async (req, res,next) => {
             let otp = generateOtp();
             // update the user with otp and otp time
 
-            let updatedUser = await User.findByIdAndUpdate(savedUser._id, {
-                phone_otp: otp,
-                phone_otp_time: Date.now()
-            }, {new: true})
-            sendSms(`Your otp is ${otp}`, phone);
+            generateAndSendOtp(savedUser);
             return sendResponse(res, 200, true, "User created successfully", savedUser);
         }
         catch(err){
-            return sendResponse(res, 400, false, "User not created", err);
+            return sendResponse(res, 400, false, "User not created", err.message);
         }
      
 }
 
 const verifyOtp = async (req, res, next) => {
-    // email, user_id, otp
+    let {otp, userId} = req.body;
+    if(!otp || !userId){
+        return sendResponse(res, 400, false, "All fields are required", "");
+    }
+    try{
+       const foundUser =  User.findById({_id: userId})
+         if(!foundUser){
+                return sendResponse(res, 400, false, "User not found", "");
+         }
+            if(foundUser.phone_otp != otp){
+                return sendResponse(res, 400, false, "Otp is incorrect", "");
+            }
+            if(foundUser.phone_otp_time+ 15*60*1000 < Date.now()){
+                return sendResponse(res, 400, false, "Otp is expired, Request a new One", "");
+            }
+            let updatedUser = await User.findByIdAndUpdate({_id: userId}, {phone_verified: true}, {new: true});
+
+            return sendResponse(res, 200, true, "Otp verified successfully", updatedUser);
+
+    }
+    catch(err){
+        return sendResponse(res, 400, false, "User not found", "");
+    }
+
 }
 
 const resendOtp = async (req, res, next) => {
+   let {userId} = req.body;
+
+   if(!userId){
+    return sendResponse(res, 400, false, "All fields are required", "");
+   }
+   try{
+      const foundUser =  await User.findById({_id: userId})
+        if(!foundUser){
+                return sendResponse(res, 400, false, "User not found", "");
+        }
+        generateAndSendOtp(foundUser);
+        return sendResponse(res, 200, true, "Otp sent successfully", "");
+   }
+
+    catch(err){
+        return sendResponse(res, 400, false, "User not found", "");
+    }
 
 }
 
@@ -67,4 +112,4 @@ const changePassword = async (req, res, next) => {
 }
 
 
-module.exports = {signup}
+module.exports = {signup, verifyOtp, resendOtp}
