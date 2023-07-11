@@ -1,7 +1,4 @@
 
-
-
-
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
@@ -15,10 +12,11 @@ const PORT = 5000;
 
 // models: 
 require('./models/user.models');
-require('./models/post');
+require('./models/post.models');
 
 // routes:
 const userRoutes = require('./routes/user.route');
+const postRouter = require('./routes/post.routes');
 
 // database connection: 
 
@@ -43,6 +41,7 @@ app.use(cors());
 app.use(customLogger);
 app.use(morgan('abhi'));
 app.use('/api/user', userRoutes);
+app.use('/api/post', postRouter);
 
 // app.use(errorHandler);
 
