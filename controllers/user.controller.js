@@ -5,7 +5,7 @@ const User = mongoose.model('User');
 const sendResponse = require('../utilities/sendResponse');
 const sendSms = require('../utilities/sendSms');
 const sendEmail = require('../utilities/sendEmail');
-const { v4 : uuidv4, v4 } = require('uuid');
+const { v4: uuidv4 } = require('uuid');
 
 function generateOtp(){
     let otp = Math.floor(Math.random() * 1000000);
@@ -68,14 +68,13 @@ const verifyOtp = async (req, res, next) => {
                     console.log(otp);
                 return sendResponse(res, 400, false, "Otp is incorrect", "");
             }
-            if(foundUser.phone_otp_time+ 1*60*1000 < Date.now()){
+            if(foundUser.phone_otp_time+ 15*60*1000 > Date.now()){
                 console.log(foundUser.phone_otp_time);
                 return sendResponse(res, 400, false, "Otp is expired, Request a new One", "");
             }
-            let updatedUser = await User.findByIdAndUpdate({_id: userId}, {phone_verified: true}, {new: true});
-
-            let token = v4();
-            User.findOneAndUpdate({_id: userId}, {token: token}, {new: true})
+            let token = uuidv4();
+            console.log("Token",token);
+            let updatedUser = await User.findByIdAndUpdate({_id: userId}, {phone_verified: true, token:token}, {new: true});
 
 
             return sendResponse(res, 200, true, "Otp verified successfully", updatedUser);
